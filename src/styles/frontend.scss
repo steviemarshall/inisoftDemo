@@ -1,0 +1,19 @@
+// Set up site scss
+
+// @import 'settings';
+// @import 'foundation';
+
+@import 'foundation/settings';
+
+
+@import 'setup/variables';
+
+@import 'layout/base';
+
+body {
+  background-color: blue !important;
+}
+
+.example-div {
+  border-radius: 10x;
+}

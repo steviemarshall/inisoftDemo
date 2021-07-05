@@ -1,0 +1,13 @@
+# Folders not to track #
+
+#sass chache files
+.sass-cache/
+
+#Ignore node files
+/node_modules/
+
+#Ignore node files
+/bower_components/
+
+#Build
+/assets/dist/

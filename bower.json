@@ -1,0 +1,22 @@
+{
+  "name": "inisoftDemo",
+  "authors": [
+    "steviemarshall <steviemarshall@googlemail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "foundation-sites": "^6.6.3",
+    "motion-ui": "^2.0.3"
+  }
+}

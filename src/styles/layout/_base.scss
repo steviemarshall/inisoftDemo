@@ -1,0 +1,15 @@
+body {
+  // background-color: orange;
+  // background-color: $custom-body-color;
+  // background-color: $light-gray;
+  // background-color: $primary-color;
+  // background-color: $get-color();
+  background-color: orange;
+}
+
+
+body {
+  &.active {
+    background-color: rebeccapurple;
+  }
+}
