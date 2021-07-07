@@ -13,6 +13,7 @@ const gulp = require('gulp');
 // Require Packages
 const autoprefixer = require('gulp-autoprefixer'),
       //clean = require('gulp-clean'),
+      browserSync = require('browser-sync').create(),
       concat = require('gulp-concat'),
       cssnano = require('gulp-cssnano'),
       del = require('del'),
@@ -100,6 +101,7 @@ function styles() {
     .pipe(sourcemaps.write('./maps'))
     .pipe(lec({verbose:true, eolc: 'LF', encoding:'utf8'}))
     .pipe(gulp.dest('./web/assets/dist/css'))
+    .pipe(browserSync.stream());
 }
 
 
@@ -128,7 +130,8 @@ function scripts() {
     }))
     .pipe(sourcemaps.write('./maps'))
     .pipe(lec({verbose:true, eolc: 'LF', encoding:'utf8'}))
-    .pipe(gulp.dest('./web/assets/dist/js'));
+    .pipe(gulp.dest('./web/assets/dist/js'))
+    .pipe(browserSync.stream());
 }
 
 // Task: Move fonts
@@ -138,6 +141,7 @@ function fonts() {
     paths.src + '/fonts/**/*'
     ])
     .pipe(gulp.dest('./web/assets/dist/fonts'))
+    .pipe(browserSync.stream());
 }
 
 // Task: Move images
@@ -163,14 +167,20 @@ function images() {
         ]})
       ]))
     .pipe(gulp.dest('./web/assets/dist/images'))
+    .pipe(browserSync.stream());
 }
 
 // Task: Watch files/folders
 function watch() {
+  browserSync.init({
+    open: 'external',
+    proxy: 'http://localhost.inisoftdemo',
+    port: 8080, 
+  });
   gulp.watch(paths.src + '/styles/**/*.scss', styles);
   gulp.watch(paths.src + '/js/**/*.js', scripts);
   gulp.watch(paths.src + '/fonts/**/*', fonts);
-  gulp.watch(paths.src + '/images/**/*', images);
+  gulp.watch(paths.src + '/images/**/*', images).on('change', browserSync.reload);
 }
 
 
