@@ -17,6 +17,7 @@ const autoprefixer = require('gulp-autoprefixer'),
       cssnano = require('gulp-cssnano'),
       del = require('del'),
       imagemin = require('gulp-imagemin'),
+      lec = require('gulp-line-ending-corrector'),
       log = require('fancy-log'),
       sass = require('gulp-sass'),
       size = require('gulp-size'),
@@ -97,6 +98,7 @@ function styles() {
       showFiles: true
     }))
     .pipe(sourcemaps.write('./maps'))
+    .pipe(lec({verbose:true, eolc: 'LF', encoding:'utf8'}))
     .pipe(gulp.dest('./web/assets/dist/css'))
 }
 
@@ -125,6 +127,7 @@ function scripts() {
       showFiles: true 
     }))
     .pipe(sourcemaps.write('./maps'))
+    .pipe(lec({verbose:true, eolc: 'LF', encoding:'utf8'}))
     .pipe(gulp.dest('./web/assets/dist/js'));
 }
 
