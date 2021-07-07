@@ -108,6 +108,7 @@ function scripts() {
     paths.bower + '/jquery/dist/jquery.js',
     paths.bower + '/foundation-sites/dist/js/foundation.js'
     ])
+    .pipe(uglify())
     .pipe(concat('main.min.js'))
     .pipe(gulp.dest('./web/assets/dist/js'));
 
@@ -116,11 +117,14 @@ function scripts() {
     paths.src + '/js/scripts/ui.js',
     paths.src + '/js/scripts/alertExample.js'
     ])
+    .pipe(sourcemaps.init())
+    .pipe(uglify())
     .pipe(concat('scripts.min.js'))
     .pipe(size({
       //gzip: true,
       showFiles: true 
     }))
+    .pipe(sourcemaps.write('./maps'))
     .pipe(gulp.dest('./web/assets/dist/js'));
 }
 
