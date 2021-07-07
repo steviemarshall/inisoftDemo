@@ -4,7 +4,7 @@ $(document).foundation();
 var inisoftDemo = {
   init: function() {
     this.ui.init();
-    this.alert.init();
+    this.alertExample.init();
   }
 };
 

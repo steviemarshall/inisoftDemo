@@ -1,5 +1,4 @@
-inisoftDemo.alert = {
-
+inisoftDemo.alertExample = {
   init: function() {
     this.fireAlert();
   },
