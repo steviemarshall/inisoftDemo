@@ -99,7 +99,11 @@ function styles() {
       showFiles: true
     }))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(lec({verbose:true, eolc: 'LF', encoding:'utf8'}))
+    .pipe(lec({
+      verbose: true,
+      eolc: 'LF',
+      encoding:'utf8'
+    }))
     .pipe(gulp.dest('./web/assets/dist/css'))
     .pipe(browserSync.stream());
 }
@@ -173,9 +177,9 @@ function images() {
 // Task: Watch files/folders
 function watch() {
   browserSync.init({
-    open: 'external',
+    // open: 'external',
     proxy: 'http://localhost.inisoftdemo',
-    port: 8080, 
+    // port: 8080, 
   });
   gulp.watch(paths.src + '/styles/**/*.scss', styles);
   gulp.watch(paths.src + '/js/**/*.js', scripts);
