@@ -29,7 +29,9 @@ const autoprefixer = require('gulp-autoprefixer'),
 const paths = {
       bower: './bower_components',
       node: './node_modules',
-      src: './src'
+      src: './src',
+      build: './web/build/',
+      dist: './web/dist/'
 }
 
 // Test function
@@ -38,30 +40,11 @@ function message(cb) {
   cb();
 }
 
-
 // PRODUCTION -------------------------------------------------------->
 
-// Empty Repository
-// function cleanRepo(cb) {
-//    return gulp.src([
-//     './web/assets/dist/**'
-//     ])
-//     .pipe(clean({
-//       read: false,
-//       allowEmpty: true,
-//       force: "true" 
-//     }));
-//     cb();
-// }
-
-function clean() {
-  return del(["./web/assets/"]);
+function cleanBuild() {
+  return del([paths.build]);
 }
-
-// function cleanRepo(cb) {
-//    return clean(["./web/assets/"]);
-//    cb();
-// }
 
 // Tasks: Set up SASS and pipe to folders
 function styles() {
@@ -77,37 +60,20 @@ function styles() {
         paths.bower + '/motion-ui/src'
       ],
       errorLogToConsole: true,
-      outputStyle: 'compressed'
+      outputStyle: 'expanded'
     }))
     .on('error', sass.logError)
     .pipe(autoprefixer({
       browserlist: ['last 2 versions'],
       cascade: false
     }))
-    .pipe(cssnano({
-      discardComments: {
-          removeAll: true
-      },
-      discardDuplicates: true,
-      discardEmpty: true,
-      minifyFontValues: true,
-      minifySelectors: true
-    }))
-    .pipe(concat('main.min.css'))
-    .pipe(size({
-      gzip: true,
-      showFiles: true
-    }))
+    .pipe(concat('main.css'))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(lec({
-      verbose: true,
-      eolc: 'LF',
-      encoding:'utf8'
-    }))
-    .pipe(gulp.dest('./web/assets/dist/css'))
+    .pipe(gulp.dest([
+      paths.build + '/css'
+    ]))
     .pipe(browserSync.stream());
 }
-
 
 // Task: Set up JS and pipe to folders
 function scripts() {
@@ -116,9 +82,10 @@ function scripts() {
     paths.bower + '/jquery/dist/jquery.js',
     paths.bower + '/foundation-sites/dist/js/foundation.js'
     ])
-    .pipe(uglify())
-    .pipe(concat('main.min.js'))
-    .pipe(gulp.dest('./web/assets/dist/js'));
+    .pipe(concat('main.js'))
+    .pipe(gulp.dest([
+      paths.build + '/js'
+      ]));
 
   return gulp.src([
     paths.src + '/js/script.js',
@@ -126,15 +93,11 @@ function scripts() {
     paths.src + '/js/scripts/alertExample.js'
     ])
     .pipe(sourcemaps.init())
-    .pipe(uglify())
-    .pipe(concat('scripts.min.js'))
-    .pipe(size({
-      //gzip: true,
-      showFiles: true 
-    }))
+    .pipe(concat('scripts.js'))
     .pipe(sourcemaps.write('./maps'))
-    .pipe(lec({verbose:true, eolc: 'LF', encoding:'utf8'}))
-    .pipe(gulp.dest('./web/assets/dist/js'))
+    .pipe(gulp.dest([
+      paths.build + '/js'
+      ]))
     .pipe(browserSync.stream());
 }
 
@@ -144,7 +107,9 @@ function fonts() {
   return gulp.src([
     paths.src + '/fonts/**/*'
     ])
-    .pipe(gulp.dest('./web/assets/dist/fonts'))
+    .pipe(gulp.dest([
+      paths.build + '/fonts'
+    ]))
     .pipe(browserSync.stream());
 }
 
@@ -170,7 +135,9 @@ function images() {
             {cleanupIDs: false}
         ]})
       ]))
-    .pipe(gulp.dest('./web/assets/dist/images'))
+    .pipe(gulp.dest([
+      paths.build + '/images'
+    ]))
     .pipe(browserSync.stream());
 }
 
@@ -191,50 +158,88 @@ function watch() {
 // DISTRIBUTION -------------------------------------------------------------->
 
 // Empty /dist/ Repository
-// function cleanDist(cb) {
-//    return gulp.src('./web/assets/dist/**/*')
-//     .pipe(clean());
-//     cb();
-// }
+function cleanDist() {
+  return del([paths.dist]);
+}
 
-// Move CSS to /dist/ & minify
-// function distStyles() {
-//   log("-> Dist: Styles")
-//   return gulp.src('./web/assets/build/css/*.css')
-//     .pipe(concat('main.min.css'))
-//     .pipe(cssnano({
-//       discardComments: {
-//           removeAll: true
-//       },
-//       discardDuplicates: true,
-//       discardEmpty: true,
-//       minifyFontValues: true,
-//       minifySelectors: true
-//     }))
-//     .pipe(size({
-//       showFiles: true 
-//     }))
-//     .pipe(gulp.dest('./web/assets/dist/css'))
-// }
+// Move CSS to /dist/ & process
+function stylesDist() {
+  log("-> Dist: Styles")
+  return gulp.src([
+    paths.build + '/css/*.css'
+    ])
+    .pipe(sourcemaps.init())
+    .pipe(cssnano({
+      discardComments: {
+        removeAll: true
+      },
+      discardDuplicates: true,
+      discardEmpty: true,
+      minifyFontValues: true,
+      minifySelectors: true
+    }))
+    .pipe(concat('main.min.css'))
+    .pipe(size({
+      gzip: true,
+      showFiles: true
+    }))
+    .pipe(lec({
+      verbose: true,
+      eolc: 'LF',
+      encoding:'utf8'
+    }))
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest([
+      paths.dist + '/css'
+    ]));
+}
 
-// function distScripts() {
-//   log("-> Dist: Scripts")
-//   return gulp.src([
-//       './web/assets/build/js/main.js',
-//       './web/assets/build/js/scripts.js'
-//     ])
-//     .pipe(concat('main.min.js'))
-//     .pipe(uglify())
-//     .pipe(gulp.dest('./web/assets/dist/js'));
-// }
+// Move JS to /Dist/ & process
+function scriptsDist() {
+  log("-> Dist: Scripts")
+  return gulp.src([
+      paths.build + '/js/main.js',
+      paths.build + '/js/scripts.js'
+    ])
+    .pipe(sourcemaps.init())
+    .pipe(uglify())
+    .pipe(concat('main.min.js'))
+    .pipe(size({
+      gzip: true,
+      showFiles: true 
+    }))
+    .pipe(lec({
+      verbose:true,
+      eolc: 'LF',
+      encoding:'utf8'
+    }))
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest([
+      paths.dist + '/js'
+    ]));
+}
 
-// function distImages() {
-//   log("-> Dist: Images")
-//   return gulp.src([
-//     paths.src + './web/assets/build/images/**/*.+(png|jpg|jpeg|gif|svg)'
-//     ])
-//     .pipe(gulp.dest());
-// }
+// Task: Move fonts to /Dist/
+function fontsDist() {
+  log("-> Dist: Fonts");
+  return gulp.src([
+    paths.build + '/fonts/**/*'
+    ])
+    .pipe(gulp.dest([
+      paths.dist + '/fonts'
+    ]));
+}
+
+// Task Move image to /Dist/
+function imagesDist() {
+  log("-> Dist: Images")
+  return gulp.src([
+    paths.build + '/images/**/*.+(png|jpg|jpeg|gif|svg)'
+    ])
+    .pipe(gulp.dest([
+      paths.dist + '/images'
+    ]));
+}
 
 
 
@@ -242,17 +247,19 @@ function watch() {
 
 // GULP COMMANDS------------------------------------------------------------>
 
-
 // const start = gulp.series(clean, gulp.parallel(styles, scripts, fonts, images), watch);
-const start = gulp.series(clean, styles, scripts, fonts, images, watch);
+const start = gulp.series(cleanBuild, styles, scripts, fonts, images, watch);
 gulp.task('start', start);
 
+
+const readyDist = gulp.series(cleanDist, stylesDist, scriptsDist, fontsDist, imagesDist);
+gulp.task('readyDist', readyDist)
 
 // Helper Task
 exports.message = message;
 
 // Build Tasks
-exports.clean = clean;
+exports.cleanBuild = cleanBuild;
 exports.styles = styles;
 exports.scripts = scripts;
 exports.fonts = fonts;
@@ -262,8 +269,9 @@ exports.default = start;
 
 
 // Distibution Tasks
-// exports.cleanDist = cleanDist;
-// exports.distStyles = distStyles;
-// exports.distScripts = distScripts;
-
-
+exports.cleanDist = cleanDist;
+exports.stylesDist = stylesDist;
+exports.scriptsDist = scriptsDist;
+exports.fontsDist = fontsDist;
+exports.imagesDist = imagesDist;
+exports.readyDist = readyDist;
