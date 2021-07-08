@@ -10,4 +10,6 @@
 /bower_components/
 
 #Build
-/assets/dist/
+/web/assets/
+/web/build/
+/web/dist/
