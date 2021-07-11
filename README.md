@@ -1,2 +1,2 @@
 # inisoftDemo
-starter project for inioft
+starter project for inisoft
